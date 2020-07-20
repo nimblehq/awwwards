@@ -1,0 +1,16 @@
+version: '3.2'
+
+services:
+  db:
+    image: postgres:12.1
+    container_name: test_threejs_db
+    environment:
+      - POSTGRES_DB=test_threejs_development
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:5.0.7
+    container_name: test_threejs_redis
+    ports:
+      - "6379:6379"
