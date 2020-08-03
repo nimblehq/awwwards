@@ -10,7 +10,11 @@
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "4.0.0-rc.8",
+    "glslify": "7.0.0",
+    "glslify-loader": "2.0.0",
+    "gsap": "3.4.2",
     "i18n-js": "3.5.1",
+    "raw-loader": "4.0.1",
     "three": "0.118.3"
   },
   "devDependencies": {

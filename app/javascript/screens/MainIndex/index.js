@@ -1,64 +1,90 @@
-// import * as THREE from 'vendor/three';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import vertexShader from '../glsl/vertex-02.glsl';
+import fragmentShader from 'raw-loader!glslify-loader!../glsl/fragment-02.glsl';
+
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import Stats from 'three/examples/jsm/libs/stats.module'
 
 class MainIndexScreen {
   constructor() {
-
     this.body = document.querySelector('body');
 
     this._setup();
   }
 
   _setup() {
-    var scene = new THREE.Scene();
+    let scene = new THREE.Scene();
 
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.set(0, 0, 500);
-
-    var renderer = new THREE.WebGLRenderer({
-      antialias: true
+    this.geometry = new THREE.PlaneGeometry(0.4, 0.6, 16, 16);
+    this.material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uTime: { value: 0.0 }
+      },
+      wireframe: true,
     });
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    scene.add(this.mesh);
+  }
+
+  __setup() {
+    let scene = new THREE.Scene();
+    const axesHelper = new THREE.AxesHelper(5)
+    scene.add(axesHelper);
+
+    let light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    scene.add( light );
+
+    // Camera
+    // let camera = new THREE.OrthographicCamera(-25.42300033569336, 25.42300033569336, 25.42300033569336, -25.42300033569336, 0.1, 1000);
+
+    // Renderer
+    let renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0x808080);
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
 
-    new OrbitControls(camera, renderer.domElement);
 
-    var light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-    scene.add( light );
 
-    var loader = new GLTFLoader();
+    const stats = Stats()
+    document.body.appendChild(stats.dom);
+
+    let loader = new GLTFLoader();
 
     loader.load( 'nimble.glb', function ( gltf ) {
       scene.add( gltf.scene );
 
-    }, undefined, function ( error ) {
-      console.error( error );
-    } );
+      let camera = gltf.cameras[0]
 
-    render();
+      const controls = new OrbitControls(camera, renderer.domElement);
 
-    function render() {
-      if (resize(renderer)) {
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
+      window.addEventListener('resize', onWindowResize, false);
+      function onWindowResize() {
+          camera.aspect = window.innerWidth / window.innerHeight
+          camera.updateProjectionMatrix()
+          renderer.setSize(window.innerWidth, window.innerHeight)
+          render()
       }
-      renderer.render(scene, camera);
-      requestAnimationFrame(render);
-    }
 
-    function resize(renderer) {
-      const canvas = renderer.domElement;
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      const needResize = canvas.width !== width || canvas.height !== height;
-      if (needResize) {
-        renderer.setSize(width, height, false);
+      var animate = function () {
+        requestAnimationFrame(animate)
+        controls.update()
+        render()
+        stats.update()
+      };
+
+      function render() {
+        renderer.render(scene, camera)
       }
-      return needResize;
-    }
+      animate();
+
+        console.log(gltf)
+
+      }, undefined, function ( error ) {
+        console.error( error );
+      } );
   };
 }
 
