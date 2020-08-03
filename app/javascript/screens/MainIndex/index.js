@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import vertexShader from '../glsl/vertex-02.glsl';
-import fragmentShader from 'raw-loader!glslify-loader!../glsl/fragment-02.glsl';
+import Plane from '../../gl/Plane';
+import { preloadImages } from '../../gl/utils';
+import Smooth from '../../components/Smooth';
 
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -14,19 +15,11 @@ class MainIndexScreen {
   }
 
   _setup() {
-    let scene = new THREE.Scene();
-
-    this.geometry = new THREE.PlaneGeometry(0.4, 0.6, 16, 16);
-    this.material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        uTime: { value: 0.0 }
-      },
-      wireframe: true,
-    });
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-    scene.add(this.mesh);
+    preloadImages().then(() => {
+      const elements = document.querySelectorAll('.js-plane');
+      elements.forEach((el, index) => new Plane().init(el, index));
+      const smooth = new Smooth();
+    })
   }
 
   __setup() {

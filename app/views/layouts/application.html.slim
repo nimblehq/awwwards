@@ -6,7 +6,9 @@ html lang=I18n.locale
     == csp_meta_tag
 
     == stylesheet_link_tag 'application', media: 'all'
-    == javascript_pack_tag 'application'
+
 
   body class='#{controller_name.dasherize} #{action_name.dasherize}'
     == yield
+
+  == javascript_pack_tag 'application'

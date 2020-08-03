@@ -1,15 +1,34 @@
-body.main {
-  main {
+body {
+  .portfolio {
     display: block;
-    background-color: darkblue;
-    height: 100vh;
+
+    &__figure {
+      width: 520px;
+      height: 820px;
+    }
+
+    &__image {
+      display: none;
+    }
+
+    &__item:nth-child(2n+1) {
+      padding: 20px;
+      text-align: right;
+
+      .portfolio__figure {
+        margin-right: 20px;
+        margin-left: auto;
+      }
+    }
   }
 }
 
-body {
-  section.portfolio {
-    display: block;
-    height: 100vh;
-    background-color: darkgoldenrod;
-  }
+
+.dom-gl {
+  position: fixed;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
