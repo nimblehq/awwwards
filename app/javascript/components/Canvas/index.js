@@ -31,10 +31,13 @@ class Canvas {
     element.appendChild(renderer.domElement);
 
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    makeCube(geometry, 0xcc3344, -5, -1, -4.5);
-    makeCube(geometry, 0xcc3344, 7, -1, -8);
-    makeCube(geometry, 0xcc3344, 2, -2.5, -3);
-    makeCube(geometry, 0xcc3344, -2, 2.2, -2);
+    makeCube(geometry, -5, -1, -4.5);
+    makeCube(geometry, 7, -1, -8);
+    makeCube(geometry, 2, -2.5, -3);
+    makeCube(geometry, -2, 2.2, -2);
+
+    drawTriangle(new THREE.Vector3(0,0,0), new THREE.Vector3(5,0,0), new THREE.Vector3(5,5,0));
+    drawTriangle(new THREE.Vector3(0,0,0), new THREE.Vector3(0,5,0), new THREE.Vector3(0,5,5));
 
     // scene.add(cube);
 
@@ -84,7 +87,7 @@ class Canvas {
       return needResize;
     }
 
-    function makeCube(geometry, color, positionX, positionY, positionZ) {
+    function makeCube(geometry, positionX, positionY, positionZ) {
       const material = new THREE.MeshBasicMaterial({color: 0xcc3344});
       let cube = new THREE.Mesh(geometry, material);
       cube.position.set(positionX, positionY, positionZ);
@@ -92,28 +95,36 @@ class Canvas {
       scene.add(cube);
     }
 
+    function drawTriangle(vector1, vector2, vector3) {
+      const material = new THREE.MeshBasicMaterial({color: 0x2B2050});
+      let triangle = new THREE.Triangle(vector1, vector2, vector3);
+      var normal = triangle.normal();
+
+      var geometry = new THREE.Geometry();
+      geometry.vertices.push(triangle.a);
+      geometry.vertices.push(triangle.b);
+      geometry.vertices.push(triangle.c);
+      geometry.faces.push(new THREE.Face3(0, 1, 2, normal));
+
+      let triangleMesh = new THREE.Mesh(geometry, material);
+
+      scene.add(triangleMesh);
+    }
+
     element.addEventListener('mousemove', (event) => {
       event.preventDefault();
-      // camera.setFocalLength(35);
-      // const x = event.clientX;
-      // const y = event.clientY;
-      const sensitivity = 0.3;
+
       const maxHeight = element.clientHeight;
       const maxWidth = element.clientWidth;
-      // camera.setRotationFromAxisAngle()
-      // camera.position.x = camera.position.x + x * 0.5;
-      // camera.position.y = camera.position.y + y * 0.5;
-      const movementX = (event.movementX * Math.PI * sensitivity) / 180;
-      const movementY = (-event.movementY * Math.PI * sensitivity) / 180;
 
-      // console.log('maxWidth', maxWidth);
-      // console.log('maxHeight', maxHeight);
-      // const movementX = (event.movementX / maxWidth) * 100;
-      // const movementY = (-event.movementY / maxHeight) * 100;
-      // console.log('movementX', movementX);
-      // console.log('movementY', movementY);
-      camera.position.x = camera.position.x + movementX;
-      camera.position.y = camera.position.y + movementY;
+      let movementX = event.clientX / maxWidth;
+      let movementY = -event.clientY / maxHeight;
+      let sensitivity = 0.45;
+      camera.position.x = sensitivity * movementX;
+      camera.position.y = sensitivity * movementY;
+
+      // console.log('X', x, camera.position.x);
+      // console.log('Y', y, camera.position.y);
       camera.updateProjectionMatrix();
     });
   }
@@ -124,11 +135,6 @@ class Canvas {
     const near = 0.1;
     const far = 10;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    // camera.position.set(0, 0, 0);
-    // camera.position.set(-2, 1, -3);
-    // camera.position.x = 2;
-    // camera.position.y = 1;
-    // camera.position.z = 3;
 
     return camera;
   }
