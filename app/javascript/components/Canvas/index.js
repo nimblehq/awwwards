@@ -36,10 +36,8 @@ class Canvas {
     makeCube(geometry, 2, -2.5, -3);
     makeCube(geometry, -2, 2.2, -2);
 
-    drawTriangle(new THREE.Vector3(0,0,0), new THREE.Vector3(5,0,0), new THREE.Vector3(5,5,0));
-    drawTriangle(new THREE.Vector3(0,0,0), new THREE.Vector3(0,5,0), new THREE.Vector3(0,5,5));
-
-    // scene.add(cube);
+    drawTriangle(7, -1, -8);
+    drawTriangle(-5, -1, -4.5);
 
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
@@ -95,20 +93,21 @@ class Canvas {
       scene.add(cube);
     }
 
-    function drawTriangle(vector1, vector2, vector3) {
+    function drawTriangle(positionX, positionY, positionZ) {
+      const vector1 = new THREE.Vector3(0, 0, 0);
+      const vector2 = new THREE.Vector3(5, 0, 0);
+      const vector3 = new THREE.Vector3(5, 5, 0);
+
+      const geometry = new THREE.Geometry();
+      geometry.vertices.push(vector1, vector2, vector3);
+      geometry.faces.push(new THREE.Face3(0, 1, 2));
+
       const material = new THREE.MeshBasicMaterial({color: 0x2B2050});
-      let triangle = new THREE.Triangle(vector1, vector2, vector3);
-      var normal = triangle.normal();
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(positionX, positionY, positionZ);
+      mesh.rotateZ(Math.floor(Math.random() * 10));
 
-      var geometry = new THREE.Geometry();
-      geometry.vertices.push(triangle.a);
-      geometry.vertices.push(triangle.b);
-      geometry.vertices.push(triangle.c);
-      geometry.faces.push(new THREE.Face3(0, 1, 2, normal));
-
-      let triangleMesh = new THREE.Mesh(geometry, material);
-
-      scene.add(triangleMesh);
+      scene.add(mesh);
     }
 
     element.addEventListener('mousemove', (event) => {
