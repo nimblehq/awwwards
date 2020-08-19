@@ -2,10 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass.js';
-import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
-
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass';
 
 export const DEFAULT_SELECTOR = '.canvas';
 
@@ -26,18 +23,19 @@ class Canvas {
       antialias: true
     });
     renderer.setSize(element.clientWidth, element.clientHeight);
-    // renderer.setClearColor(0x808080);
+    renderer.setClearColor(0x808080);
 
     element.appendChild(renderer.domElement);
 
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    makeCube(geometry, -5, -1, -4.5);
+    makeCube(geometry, -5, -1.3, -4.5);
     makeCube(geometry, 7, -1, -8);
     makeCube(geometry, 2, -2.5, -3);
-    makeCube(geometry, -2, 2.2, -2);
+    makeCube(geometry, -2, 2.1, -2);
 
-    drawTriangle(7, -1, -8);
-    drawTriangle(-5, -1, -4.5);
+    drawTriangle(-5, -1, -8.5);
+    // drawTriangle(-5, -1, -3.5);
+    drawTriangle(2, -1, -10);
 
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
@@ -45,19 +43,32 @@ class Canvas {
     const bloomPass = new BloomPass(
       1,
       25,
-      4,
+      2,
       256
     );
     composer.addPass(bloomPass);
 
-    const filmPass = new FilmPass(
-      0,
-      0,
-      0,
-      false
+    // const filmPass = new FilmPass(
+    //   0,
+    //   0,
+    //   0,
+    //   false
+    // );
+    // filmPass.renderToScreen = true;
+    // composer.addPass(filmPass);
+
+    const bokehPass = new BokehPass(
+      scene,
+      camera,
+      {
+        focus: 10,
+        aspect: 0,
+        aperture: 0.0005,
+        maxblur: 1
+      }
     );
-    filmPass.renderToScreen = true;
-    composer.addPass(filmPass);
+    // bokehPass.renderToScreen = true;
+    composer.addPass(bokehPass);
 
     requestAnimationFrame(render);
 
@@ -94,9 +105,10 @@ class Canvas {
     }
 
     function drawTriangle(positionX, positionY, positionZ) {
+      const cubeSize = random(0, 10);
       const vector1 = new THREE.Vector3(0, 0, 0);
-      const vector2 = new THREE.Vector3(5, 0, 0);
-      const vector3 = new THREE.Vector3(5, 5, 0);
+      const vector2 = new THREE.Vector3(cubeSize, 0, 0);
+      const vector3 = new THREE.Vector3(cubeSize, cubeSize, 0);
 
       const geometry = new THREE.Geometry();
       geometry.vertices.push(vector1, vector2, vector3);
@@ -108,6 +120,10 @@ class Canvas {
       mesh.rotateZ(Math.floor(Math.random() * 10));
 
       scene.add(mesh);
+    }
+
+    function random(min = 0, max = 10) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     element.addEventListener('mousemove', (event) => {
