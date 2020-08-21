@@ -5,15 +5,17 @@ import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass.js';
 import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass';
 
 export const DEFAULT_SELECTOR = '.canvas';
+export const CONTAINER_SELECTOR = '.container';
 
 class Canvas {
-  constructor(elementRef) {
+  constructor(elementRef, container) {
     this.elementRef = elementRef;
+    this.container = container;
 
-    this._setup(this.elementRef);
+    this._setup(this.elementRef, this.container);
   }
 
-  _setup(element) {
+  _setup(element, container) {
     var scene = new THREE.Scene();
     var camera = this._setupCamera();
     this._setupLight(scene);
@@ -126,11 +128,11 @@ class Canvas {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    element.addEventListener('mousemove', (event) => {
+    container.addEventListener('mousemove', (event) => {
       event.preventDefault();
 
-      const maxHeight = element.clientHeight;
-      const maxWidth = element.clientWidth;
+      const maxHeight = container.clientHeight;
+      const maxWidth = container.clientWidth;
 
       let movementX = event.clientX / maxWidth;
       let movementY = -event.clientY / maxHeight;

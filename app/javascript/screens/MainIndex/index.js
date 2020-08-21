@@ -1,14 +1,17 @@
-import Canvas, { DEFAULT_SELECTOR as CANVAS_SELECTOR } from '../../components/Canvas';
+import Canvas, { CONTAINER_SELECTOR, DEFAULT_SELECTOR as CANVAS_SELECTOR } from '../../components/Canvas';
+
+// const CONTAINER_SELECTOR = '.container';
 
 class MainIndexScreen {
   constructor() {
-    this.canvasElement = document.querySelector(CANVAS_SELECTOR);
+    this.containerElement = document.querySelector(CONTAINER_SELECTOR);
+    this.canvasElement = this.containerElement.querySelector(CANVAS_SELECTOR);
 
     this._setup();
   }
 
   _setup() {
-    this.canvas = new Canvas(this.canvasElement);
+    this.canvas = new Canvas(this.canvasElement, this.containerElement);
   }
 }
 
