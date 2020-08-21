@@ -25,7 +25,8 @@ class Canvas {
       antialias: true
     });
     renderer.setSize(element.clientWidth, element.clientHeight);
-    renderer.setClearColor(0x808080);
+    // renderer.setClearColor(0x808080);
+    renderer.setClearColor(0x201547);
 
     element.appendChild(renderer.domElement);
 
